@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   # Base de données PostgreSQL
@@ -7,9 +7,9 @@ services:
     container_name: blog_personnel_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: blog_personnel
-      POSTGRES_USER: blog_user
-      POSTGRES_PASSWORD: blog_password
+      POSTGRES_DB: blog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
     ports:
       - "5432:5432"
     volumes:
@@ -43,9 +43,9 @@ services:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_DATABASE: blog_personnel
-      DB_USERNAME: blog_user
-      DB_PASSWORD: blog_password
+      DB_DATABASE: blog
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
       APP_ENV: local
       APP_DEBUG: true
     ports:
@@ -60,21 +60,21 @@ services:
     command: php artisan serve --host=0.0.0.0 --port=8000
 
   # Frontend (optionnel - si vous avez un frontend)
-  frontend:
-    build:
-      context: ./front-end
-      dockerfile: Dockerfile
-    container_name: blog_personnel_frontend
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./front-end:/app
-      - /app/node_modules
-    depends_on:
-      - laravel
-    networks:
-      - blog_network
+#   frontend:
+#     build:
+#       context: ./front-end
+#       dockerfile: Dockerfile
+#     container_name: blog_personnel_frontend
+#     restart: unless-stopped
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - ./front-end:/app
+#       - /app/node_modules
+#     depends_on:
+#       - laravel
+#     networks:
+#       - blog_network
 
 volumes:
   postgres_data:
