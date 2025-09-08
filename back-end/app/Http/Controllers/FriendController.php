@@ -46,12 +46,13 @@ class FriendController extends Controller
             ], 422);
         }
 
-        $query = $request->query;
+        $query = $request->input('query');
         $currentUser = $request->user();
 
         $users = User::where('id', '!=', $currentUser->id)
             ->where(function ($q) use ($query) {
                 $q->where('username', 'like', "%{$query}%")
+                  ->orWhere('full_name', 'like', "%{$query}%")
                   ->orWhere('phone_number', 'like', "%{$query}%");
             })
             ->select('id', 'username', 'full_name', 'phone_number')

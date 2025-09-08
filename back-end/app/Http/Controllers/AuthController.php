@@ -252,10 +252,12 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Vérifier si le téléphone est vérifié
         if (!$user->phone_verified_at) {
             return response()->json([
-                'message' => 'Veuillez vérifier votre numéro de téléphone avant de vous connecter'
-            ], 401);
+                'message' => 'Veuillez vérifier votre numéro de téléphone avant de vous connecter',
+                'phone_not_verified' => true
+            ], 403);
         }
 
         $token = $user->createToken('auth-token')->accessToken;
@@ -285,6 +287,32 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Déconnexion réussie'
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/auth/user",
+     *     tags={"Authentication"},
+     *     summary="Récupérer l'utilisateur actuel",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Utilisateur récupéré avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié"
+     *     )
+     * )
+     */
+    public function user(Request $request)
+    {
+        return response()->json([
+            'user' => $request->user()
         ]);
     }
 } 

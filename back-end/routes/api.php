@@ -19,6 +19,9 @@ Route::middleware('auth:api')->group(function () {
     // Déconnexion
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     
+    // Utilisateur actuel
+    Route::get('/auth/user', [AuthController::class, 'user']);
+    
     // Articles
     Route::get('/articles', [ArticleController::class, 'index']);
     Route::get('/articles/my', [ArticleController::class, 'myArticles']);
@@ -28,6 +31,7 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
     
     // Commentaires
+    Route::get('/articles/{article_id}/comments', [CommentController::class, 'index']);
     Route::post('/articles/{article_id}/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
     
