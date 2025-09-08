@@ -16,6 +16,52 @@ use Illuminate\Support\Facades\Validator;
 class CommentController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/api/articles/{article_id}/comments",
+     *     summary="Récupérer les commentaires d'un article",
+     *     tags={"Commentaires"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="article_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Liste des commentaires"
+     *     )
+     * )
+     */
+    public function index(Request $request, $articleId)
+    {
+        $article = Article::find($articleId);
+
+        if (!$article) {
+            return response()->json([
+                'message' => 'Article non trouvé'
+            ], 404);
+        }
+
+        // Vérifier si l'utilisateur peut voir l'article
+        $user = $request->user();
+        if ($article->user_id !== $user->id && !$article->is_public) {
+            return response()->json([
+                'message' => 'Accès non autorisé'
+            ], 403);
+        }
+
+        $comments = $article->comments()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'comments' => $comments
+        ]);
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/articles/{article_id}/comments",
      *     summary="Ajouter un commentaire à un article",
